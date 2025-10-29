@@ -1,0 +1,96 @@
+* {
+    --qu-color-background: rgb(245, 245, 245);
+    --qu-color-background-body: white;
+    --qu-color-foreground: #666666;
+    --qu-color-border: #e4e4e7;
+}
+
+.meetingpage-mainarea {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--qu-color-background);
+    color: var(--qu-color-foreground);
+    font-family: var(--font-figtree);
+}
+
+.meetingpage-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 20px;
+    height: 60px;
+    width: 100vw;
+    background-color: var(--qu-color-background);
+    flex-shrink: 0;
+}
+
+.meetingpage-header-icon {
+    height: 20px;
+    width: fit-content;
+}
+
+.meetingpage-header-title {
+    font-size: 20px;
+}
+
+.meetingpage-body {
+    background-color: var(--qu-color-background-body);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+    height: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 8px;
+    max-height: calc(100vh - 120px);
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    z-index: 10;
+    border: 1px solid var(--qu-color-border);
+    padding: 12px;
+    gap: 12px;
+}
+
+.meetingpage-body-participant {
+    background-color: var(--qu-color-background);
+    border-radius: 8px;
+    border: 1px solid var(--qu-color-border);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.meetingpage-body-participant-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background-color: var(--qu-color-background-body);
+    border-radius: 2px;
+    border: 1px solid var(--qu-color-border);
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    border-radius: 10px;
+}
+    
+.meetingpage-body-participant-avatar {
+    border: 1px solid var(--qu-color-border);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    background-color: var(--qu-color-background-body);
+}
+
+.meetingpage-body-participant-avatar-fallback {
+    background-color: var(--qu-color-background-body);
+}
+
