@@ -6,51 +6,32 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useAuth } from "keystone-lib";
 import { useRouter } from "next/navigation";
+import {CreateMeeting} from "@/components/createMeeting";
+import {JoinMeeting} from "@/components/createMeeting";
+import "@/app/app/home.css"
+import { useClock } from "@/lib/useClock";
 
 export default function AppPage() {
+    const time = useClock()
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
     const auth = useAuth({appId: process.env.NEXT_PUBLIC_APP_ID!, keystoneUrl: process.env.NEXT_PUBLIC_KEYSTONE_URL!})
     const router = useRouter()
     return (
-        <div>
-            <h1>Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {auth.data?.user.name}</h1>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button variant={"outline"}><VideoIcon />New Meeting</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>New Meeting</DialogTitle>
-                        <DialogDescription>
-                            Create a new Video Conference
-                        </DialogDescription>
-                    </DialogHeader>
-                    <Input placeholder="Meeting Name" value={name} onChange={(e) => setName(e.target.value)} />
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant={"outline"} onClick={() => {
-                                fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + "/meeting/create", {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "Authorization": "Bearer " + auth.data?.sessionId!
-                                    },
-                                    body: JSON.stringify({name})
-                                }).then((res) => {
-                                    if (res.ok) {
-                                        setOpen(false)
-                                        res.json().then((data) => {
-                                            console.log(data)
-                                            router.push("/meeting/" + data.id)
-                                        })
-                                    }
-                                })
-                            }}><PlusIcon />Create</Button>
-                        </DialogClose>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+        <div className="homepage">
+            <div className="homepage-header">
+                <VideoIcon size={25} color="var(--qu-color-foreground)" strokeWidth={1.5} />
+                {auth.data?.tenant.logo ? <img src={auth.data?.tenant.logo} className="homepage-header-title-secondary-logo" /> : <h1 className="homepage-header-title-secondary">{auth.data?.tenant.name}</h1>}
+                <h1 className="homepage-header-title">Quntem Meet</h1>
+            </div>
+            <div className="homepage-mainarea">
+                <h1 className="homepage-mainarea-clock">{time.getHours() != 0 ? time.getHours() > 9 ? time.getHours() : "0" + time.getHours() : "00"}:{time.getMinutes() != 0 ? time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes() : "00"} • {time.getDate()}/{time.getMonth() + 1}/{time.getFullYear()}</h1>
+                <h1 className="homepage-mainarea-title">Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {auth.data?.user.name}</h1>
+                <div className="homepage-mainarea-button-row">
+                    <CreateMeeting />
+                    <JoinMeeting />
+                </div>
+            </div>
         </div>
     )
 }

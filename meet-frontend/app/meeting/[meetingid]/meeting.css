@@ -1,10 +1,3 @@
-* {
-    --qu-color-background: rgb(245, 245, 245);
-    --qu-color-background-body: white;
-    --qu-color-foreground: #666666;
-    --qu-color-border: #e4e4e7;
-}
-
 .meetingpage-mainarea {
     display: flex;
     flex-direction: column;
