@@ -37,10 +37,11 @@
     background-color: var(--qu-color-background-body);
     box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
     height: 100%;
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
     border-radius: 8px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 70px);
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
     z-index: 10;
@@ -85,5 +86,33 @@
 
 .meetingpage-body-participant-avatar-fallback {
     background-color: var(--qu-color-background-body);
+}
+
+.meetingpage-prejoin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--qu-color-background);
+    color: var(--qu-color-foreground);
+    font-family: var(--font-figtree);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.meetingpage-prejoin-button-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.meetingpage-prejoin-title {
+    font-size: 25px;
 }
 

@@ -1,7 +1,7 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, VideoIcon } from "lucide-react";
+import { PlusIcon, VideoIcon, SettingsIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useAuth } from "keystone-lib";
@@ -10,6 +10,8 @@ import {CreateMeeting} from "@/components/createMeeting";
 import {JoinMeeting} from "@/components/createMeeting";
 import "@/app/app/home.css"
 import { useClock } from "@/lib/useClock";
+import { Settings } from "@/components/createMeeting";
+import { TeamDashboard } from "@/components/createMeeting";
 
 export default function AppPage() {
     const time = useClock()
@@ -23,6 +25,9 @@ export default function AppPage() {
                 <VideoIcon size={25} color="var(--qu-color-foreground)" strokeWidth={1.5} />
                 {auth.data?.tenant.logo ? <img src={auth.data?.tenant.logo} className="homepage-header-title-secondary-logo" /> : <h1 className="homepage-header-title-secondary">{auth.data?.tenant.name}</h1>}
                 <h1 className="homepage-header-title">Quntem Meet</h1>
+                <div style={{flexGrow: 1}} />
+                <TeamDashboard />
+                <Settings />
             </div>
             <div className="homepage-mainarea">
                 <h1 className="homepage-mainarea-clock">{time.getHours() != 0 ? time.getHours() > 9 ? time.getHours() : "0" + time.getHours() : "00"}:{time.getMinutes() != 0 ? time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes() : "00"} • {time.getDate()}/{time.getMonth() + 1}/{time.getFullYear()}</h1>

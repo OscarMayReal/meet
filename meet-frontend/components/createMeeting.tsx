@@ -3,7 +3,7 @@ import { useAuth } from "keystone-lib"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, TextCursorInput, TextCursorInputIcon, VideoIcon } from "lucide-react"
+import { PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon } from "lucide-react"
 import { Input } from "@/components/ui/input";
 
 export function CreateMeeting() {
@@ -80,3 +80,43 @@ export function JoinMeeting() {
         </Dialog>
     )
 }
+
+export function Settings() {
+    const [open, setOpen] = useState(false)
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <SettingsIcon size={22} color="var(--qu-color-foreground)" strokeWidth={1.5} />
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Settings</DialogTitle>
+                    <DialogDescription>
+                        Configure your settings
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <DialogClose asChild>
+                        <Button variant={"outline"}>Close</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+export function TeamDashboard() {
+    const [open, setOpen] = useState(false)
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <UsersIcon size={22} color="var(--qu-color-foreground)" strokeWidth={1.5} />
+            </DialogTrigger>
+            <DialogContent style={{width: "100vw", height: "100vh", maxWidth: "100vw", maxHeight: "100vh", margin: "0", padding: "0", border: "none", borderRadius: "0", overflow: "hidden", boxShadow: "none"}}>
+                <iframe src="https://keystone.qplus.cloud/team" style={{width: "100vw", height: "100vh", margin: "0", padding: "0"}} />
+                <div style={{height: 50, width: 50, position: "absolute", top: 0, right: 0, backgroundColor: "white"}} />
+            </DialogContent>
+        </Dialog>
+    )
+}
+    
