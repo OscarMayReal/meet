@@ -7,7 +7,7 @@ dotenv.config();
 import { VerifySession } from "./keystone.ts";
 import { AccessToken, Room, RoomServiceClient } from 'livekit-server-sdk';
 import { createScheduledMeeting, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
-import { createUser, getUserByUserId, setUserStatus } from "./userFunctions.ts";
+import { createUser, getUserByUserId, getUsersByTenant, setUserStatus } from "./userFunctions.ts";
 import { createServer } from "http";
 
 const app = express();
@@ -145,6 +145,24 @@ app.get("/meeting/scheduled", async (req, res) => {
     const identity = sessionData.user
     const meetings = await getScheduledMeetingsForUser(identity.id)
     res.send(meetings)
+})
+
+app.get("/directory", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const identity = sessionData.user
+    const users = await getUsersByTenant(identity.tenant?.id!)
+    res.send(users)
 })
 
 io.on("connection", async (socket) => {

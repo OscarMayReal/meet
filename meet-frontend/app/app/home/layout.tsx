@@ -1,11 +1,14 @@
 "use client"
-import { VideoIcon } from "lucide-react";
+import { BookUserIcon, HomeIcon, VideoIcon } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { TeamDashboard, Settings } from "@/components/createMeeting";
 import { appContext } from "@/app/app/layout";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { usePathname, useRouter } from "next/navigation";
 export default function Layout({children}: {children: React.ReactNode}) {
     const {socket} = useContext(appContext)
+    const router = useRouter()
+    const pathname = usePathname()
     return (
         <div className="homepage">
             <div className="homepage-header">
@@ -14,6 +17,10 @@ export default function Layout({children}: {children: React.ReactNode}) {
                 {/* <h1 className="homepage-header-title">Quntem Meet</h1> */}
                 {socket?.connected && <StatusSwitch />}
                 <div style={{flexGrow: 1}} />
+                <div className="homepage-header-tabbar">
+                    <TabItem name="Home" Icon={HomeIcon} active={pathname === "/app/home"} onClick={() => router.push("/app/home")} />
+                    <TabItem name="Directory" Icon={BookUserIcon} active={pathname === "/app/home/directory"} onClick={() => router.push("/app/home/directory")} />
+                </div>
                 <TeamDashboard />
                 <Settings />
             </div>
@@ -50,3 +57,13 @@ function StatusSwitch() {
         </Select>
     )
 }
+
+function TabItem({name, Icon, active, onClick}: {name: string, Icon: React.ElementType, active: boolean, onClick: () => void}) {
+    return (
+        <div className={"homepage-header-tabbar-item" + (active ? " active" : "")} onClick={onClick}>
+            <Icon className="homepage-header-tabbar-item-icon" size={20} />
+            <h1 className="homepage-header-tabbar-item-text">{name}</h1>
+        </div>
+    )
+}
+    
