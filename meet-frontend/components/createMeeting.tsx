@@ -3,8 +3,10 @@ import { useAuth } from "keystone-lib"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon } from "lucide-react"
+import { CalendarIcon, PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input";
+import { Field, FieldGroup, FieldTitle } from "./ui/field";
+import router from "next/router";
 
 export function CreateMeeting() {
     const [open, setOpen] = useState(false)
@@ -120,3 +122,64 @@ export function TeamDashboard() {
     )
 }
     
+export function ScheduleMeeting({dataHook}: {dataHook: any}) {
+    const [open, setOpen] = useState(false)
+    const [name, setName] = useState("")
+    const [description, setDescription] = useState("")
+    const [date, setDate] = useState(new Date().toLocaleString())
+    const [endDate, setEndDate] = useState(new Date().setHours(new Date().getHours() + 1).toLocaleString())
+    const auth = useAuth({appId: process.env.NEXT_PUBLIC_APP_ID!, keystoneUrl: process.env.NEXT_PUBLIC_KEYSTONE_URL!})
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="w-[300px]"><CalendarIcon />Schedule Meeting</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Schedule Meeting</DialogTitle>
+                    <DialogDescription>
+                        Schedule a new Video Conference
+                    </DialogDescription>
+                </DialogHeader>
+                <FieldGroup>
+                    <Field>
+                        <FieldTitle>Meeting Name</FieldTitle>
+                        <Input placeholder="Meeting Name" value={name} onChange={(e) => setName(e.target.value)} />
+                    </Field>
+                    <Field>
+                        <FieldTitle>Meeting Description</FieldTitle>
+                        <Input placeholder="Meeting Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                    </Field>
+                    <Field>
+                        <FieldTitle>Start and End Date</FieldTitle>
+                        <div className="flex gap-[10px]">
+                            <Input type="datetime-local" placeholder="Meeting Start Date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            <Input type="datetime-local" placeholder="Meeting End Date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+                    </Field>
+                </FieldGroup>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => {
+                        fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + "/meeting/schedule", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + auth.data?.sessionId!
+                            },
+                            body: JSON.stringify({name, description, startTime: new Date(date), endTime: new Date(endDate)})
+                        }).then((res) => {
+                            if (res.ok) {
+                                setOpen(false)
+                                res.json().then((data) => {
+                                    console.log(data)
+                                    setOpen(false)
+                                    dataHook.reload()
+                                })
+                            }
+                        })
+                    }}><CalendarIcon />Schedule</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}

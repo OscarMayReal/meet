@@ -34,10 +34,10 @@
 .homepage-mainarea {
     flex-grow: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 100px;
     padding-left: 20px;
     padding-right: 20px;
 }
@@ -75,4 +75,48 @@
     transform: translateX(50%);
 }
 
+.homepage-actionarea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
+.homepage-scheduledmeeting-title {
+    font-size: 20px;
+}
+
+.homepage-scheduledmeeting-time {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    color: var(--qu-color-foreground-secondary);
+    font-size: 14px;
+}
+
+.homepage-scheduledmeeting {
+    width: 100%;
+}
+
+.homepage-scheduledmeetingarea-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.homepage-scheduledmeeting-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* gap: 10px; */
+    background-color: var(--qu-color-background-body);
+    padding: 10px 12px;
+    border-radius: 8px;
+    width: 300px;
+    border: 1px solid var(--qu-color-border);
+}
+
+    
+    

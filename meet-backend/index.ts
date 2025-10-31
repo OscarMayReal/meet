@@ -115,7 +115,7 @@ app.post("/meeting/schedule", async (req, res) => {
         room: req.body.room,
         limitToInvitees: req.body.limitToInvitees,
         owner: identity.id,
-        tenant: identity.tenant
+        tenant: identity.tenant?.id!
     })
     res.send(meeting);
 })
