@@ -29,6 +29,7 @@
     align-items: center;
     padding-top: 4px;
     color: var(--qu-color-foreground-secondary);
+    -webkit-app-region: no-drag;
 }
 
 .homepage-header-tabbar-item.active {
@@ -40,6 +41,7 @@
 }
 
 .homepage-header {
+    -webkit-app-region: drag;
     display: flex;
     flex-direction: row;
     align-items: center;

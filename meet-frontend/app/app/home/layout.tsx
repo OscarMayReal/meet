@@ -9,9 +9,18 @@ export default function Layout({children}: {children: React.ReactNode}) {
     const {socket} = useContext(appContext)
     const router = useRouter()
     const pathname = usePathname()
+    const [isElectron, setIsElectron] = useState(false)
+    useEffect(() => {
+        setIsElectron(navigator.userAgent.includes("Electron"))
+    }, [])
     return (
         <div className="homepage">
             <div className="homepage-header">
+                {isElectron && (
+                    <div style={{
+                        width: 60
+                    }} />
+                )}
                 <VideoIcon size={25} color="var(--qu-color-foreground)" strokeWidth={1.5} />
                 {/* {auth.data?.tenant.logo ? <img src={auth.data?.tenant.logo} className="homepage-header-title-secondary-logo" /> : <h1 className="homepage-header-title-secondary">{auth.data?.tenant.name}</h1>} */}
                 {/* <h1 className="homepage-header-title">Quntem Meet</h1> */}
@@ -19,7 +28,7 @@ export default function Layout({children}: {children: React.ReactNode}) {
                 <div style={{flexGrow: 1}} />
                 <div className="homepage-header-tabbar">
                     <TabItem name="Home" Icon={HomeIcon} active={pathname === "/app/home"} onClick={() => router.push("/app/home")} />
-                    <TabItem name="Directory" Icon={BookUserIcon} active={pathname === "/app/home/directory"} onClick={() => router.push("/app/home/directory")} />
+                    <TabItem name="Directory" Icon={BookUserIcon} active={pathname.startsWith("/app/home/directory")} onClick={() => router.push("/app/home/directory")} />
                 </div>
                 <TeamDashboard />
                 <Settings />
@@ -44,7 +53,8 @@ function StatusSwitch() {
     return (
         <Select value={status} onValueChange={setStatus}>
             <SelectTrigger style={{
-                backgroundColor: "var(--qu-color-background-body)"
+                backgroundColor: "var(--qu-color-background-body)",
+                WebkitAppRegion: "no-drag"
             }}>
                 <SelectValue placeholder="Select a status" />
             </SelectTrigger>

@@ -3,8 +3,8 @@ import '@livekit/components-styles';
 import "@/app/app/meeting/[meetingid]/meeting.css"
 import { Grid, HomeIcon, MicIcon, PhoneOffIcon, ScreenShareIcon, VideoIcon } from "lucide-react"
 import { useAuth } from "keystone-lib"
-import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useSearchParams, useParams } from "next/navigation"
+import { Suspense, useEffect, useState } from "react"
 import { ConnectionQualityIndicator, GridLayout, LiveKitRoom, useRoomContext, useRemoteParticipants, useTracks, VideoTrack, ControlBar, TrackLoop, useTrackRefContext, PreJoin, RoomAudioRenderer, useTrackToggle } from '@livekit/components-react';
 import { useToken } from "@/lib/useToken"
 import { Track } from "livekit-client"
@@ -20,6 +20,7 @@ export default function MeetingPage() {
     const [state, setState] = useState("prejoin")
     const router = useRouter()
     const [emptyaudio, setEmptyAudio] = useState<HTMLAudioElement | null>(new Audio())
+    const [joinedOnce, setJoinedOnce] = useState(false)
     useEffect(() => {
         if(state === "prejoin" && emptyaudio) {
             emptyaudio.pause()
@@ -27,31 +28,48 @@ export default function MeetingPage() {
         } else if(state === "main") {
             emptyaudio.src = "/emptymeeting.mp3"
             emptyaudio.loop = true
-            emptyaudio.play()
+            // emptyaudio.play()
         }
     }, [state])
     return (
-        <LiveKitRoom
-            serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL!}
-            token={null}
-            onConnected={() => {playSound("/connect.wav"); setState("main")}}
-            connect={false}
-            onDisconnected={() => {playSound("/disconnect.wav"); setState("prejoin")}}
-        >
-            {state === "prejoin" ? <MeetingPreJoin roomid={params.meetingid!} token={token!} /> : <MeetingMain emptyaudio={emptyaudio!} />}
-        </LiveKitRoom>
+        // <Suspense fallback={<div></div>}>
+            <LiveKitRoom
+                serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL!}
+                token={null}
+                onConnected={() => {playSound("/connect.wav"); setState("main")}}
+                connect={false}
+                onDisconnected={() => {playSound("/disconnect.wav"); setState("prejoin")}}
+            >
+                {state === "prejoin" ? <MeetingPreJoin roomid={params.meetingid!} joinedOnce={joinedOnce} setJoinedOnce={setJoinedOnce} token={token} /> : <MeetingMain emptyaudio={emptyaudio!} />}
+            </LiveKitRoom>
+        // </Suspense>
     )
 }
 
-function MeetingPreJoin({roomid, token}: {roomid: string, token: string}) {
+function MeetingPreJoin({roomid, joinedOnce, setJoinedOnce, token}: {roomid: string, joinedOnce: boolean, setJoinedOnce: (joinedOnce: boolean) => void, token: any}) {
     const room = useRoomContext()
     const router = useRouter()
+    const searchParams = useSearchParams()
+    useEffect(() => {
+        if(!token) return
+        if(searchParams.get("call") === "true" && !joinedOnce) {
+            room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, token.token).then(() => {
+                setJoinedOnce(true)
+            })
+        }
+    }, [token, searchParams])
+    if (joinedOnce && searchParams.get("call") === "true") {
+        router.push("/app")
+    }
+    if(searchParams.get("call") === "true") return <div className="meetingpage-prejoin">
+        <h1 className="meetingpage-prejoin-title">Connecting Call</h1>
+    </div>
     return (
         <div className="meetingpage-prejoin">
             <VideoIcon size={25} color="var(--qu-color-foreground)" strokeWidth={1.5} />
-            <h1 className="meetingpage-prejoin-title">Join Meeting</h1>
+            <h1 className="meetingpage-prejoin-title">{joinedOnce ? "Rejoin Meeting" : "Join Meeting"}</h1>
             <div className="meetingpage-prejoin-button-row">
-                <Button variant="outline" onClick={() => room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, token.token)}><VideoIcon />Join</Button>
+                <Button variant="outline" onClick={() => {room.connect(process.env.NEXT_PUBLIC_LIVEKIT_URL!, token.token).then(() => setJoinedOnce(true))}}><VideoIcon />Join</Button>
                 <Button variant="outline" onClick={() => router.push("/app")}><HomeIcon />Return Home</Button>
             </div>
             {/* <PreJoin /> */}
@@ -61,16 +79,22 @@ function MeetingPreJoin({roomid, token}: {roomid: string, token: string}) {
     
 function MeetingMain({emptyaudio}: {emptyaudio: HTMLAudioElement}) {
     const room = useRoomContext()
+    const [hasHadParticipants, setHasHadParticipants] = useState(false)
     const tracks = useTracks([{source: Track.Source.Camera, withPlaceholder: true}, {source: Track.Source.ScreenShare, withPlaceholder: false}])
     const remoteParticipants = useRemoteParticipants()
+    const searchParams = useSearchParams()
+    const router = useRouter()
     useEffect(() => {
-        if(remoteParticipants.length === 0) {
+        if(remoteParticipants.length === 0 && searchParams.get("call") !== "true") {
             emptyaudio.play()
-        } else {
+        } else if (remoteParticipants.length === 0 && searchParams.get("call") && hasHadParticipants) {
+            room.disconnect()
+        } else if (remoteParticipants.length > 0) {
+            setHasHadParticipants(true)
             emptyaudio.pause()
             emptyaudio.currentTime = 0
         }
-    }, [remoteParticipants])
+    }, [remoteParticipants, searchParams, hasHadParticipants])
     useEffect(() => {
         room.on("participantDisconnected", () => {
             playSound("/disconnect.wav")

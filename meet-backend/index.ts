@@ -224,6 +224,7 @@ io.on("connection", async (socket) => {
             from: user.userid!,
             to: data.to,
             meetingid: data.meetingid,
+            profile: user.profile!
         });
     })
     socket.on("telephony.decline", async (data) => {
