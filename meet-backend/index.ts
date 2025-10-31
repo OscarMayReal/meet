@@ -5,6 +5,7 @@ dotenv.config();
 
 import { VerifySession } from "./keystone.ts";
 import { AccessToken, Room, RoomServiceClient } from 'livekit-server-sdk';
+import { createScheduledMeeting, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
 
 const app = express();
 
@@ -89,6 +90,52 @@ app.post("/meeting/join", async (req, res) => {
     })
     const jwt = await token.toJwt()
     res.json({id: req.body.id, name: req.body.name, token: jwt});
+})
+
+app.post("/meeting/schedule", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const identity = sessionData.user
+    const meeting = await createScheduledMeeting({
+        name: req.body.name,
+        description: req.body.description,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        invitees: req.body.invitees,
+        room: req.body.room,
+        limitToInvitees: req.body.limitToInvitees,
+        owner: identity.id,
+        tenant: identity.tenant
+    })
+    res.send(meeting);
+})
+
+app.get("/meeting/scheduled", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const identity = sessionData.user
+    const meetings = await getScheduledMeetingsForUser(identity.id)
+    res.send(meetings)
 })
 
 app.listen(3001, () => {

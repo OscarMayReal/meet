@@ -1,7 +1,7 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, VideoIcon, SettingsIcon } from "lucide-react";
+import { PlusIcon, VideoIcon, SettingsIcon, CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useAuth } from "keystone-lib";
@@ -32,9 +32,14 @@ export default function AppPage() {
             <div className="homepage-mainarea">
                 <h1 className="homepage-mainarea-clock">{time.getHours() != 0 ? time.getHours() > 9 ? time.getHours() : "0" + time.getHours() : "00"}:{time.getMinutes() != 0 ? time.getMinutes() > 9 ? time.getMinutes() : "0" + time.getMinutes() : "00"} • {time.getDate()}/{time.getMonth() + 1}/{time.getFullYear()}</h1>
                 <h1 className="homepage-mainarea-title">Good {new Date().getHours() < 12 ? "Morning" : new Date().getHours() < 18 ? "Afternoon" : "Evening"}, {auth.data?.user.name}</h1>
-                <div className="homepage-mainarea-button-row">
-                    <CreateMeeting />
-                    <JoinMeeting />
+                <div>
+                    <div className="homepage-mainarea-button-row">
+                        <CreateMeeting />
+                        <JoinMeeting />
+                    </div>
+                    <div className="homepage-mainarea-button-row">
+                        <Button variant="outline" onClick={() => setOpen(true)}><CalendarIcon />Schedule Meeting</Button>
+                    </div>
                 </div>
             </div>
         </div>

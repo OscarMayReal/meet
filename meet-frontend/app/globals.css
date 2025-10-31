@@ -9,6 +9,8 @@
     --qu-color-foreground: #666666;
     --qu-color-foreground-secondary: #999999;
     --qu-color-border: #e4e4e7;
+    --qu-color-accent: #0C74AE;
+    --qu-color-accent-foreground: white;
     font-family: figtree;
 }
 

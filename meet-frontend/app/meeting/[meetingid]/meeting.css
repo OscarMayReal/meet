@@ -13,24 +13,44 @@
     font-family: var(--font-figtree);
 }
 
-.meetingpage-header {
+.meetingpage-footer {
     display: flex;
     align-items: center;
     gap: 10px;
     padding-left: 20px;
-    height: 60px;
+    height: 70px;
     width: 100vw;
     background-color: var(--qu-color-background);
     flex-shrink: 0;
 }
 
-.meetingpage-header-icon {
+.meetingpage-footer-icon {
     height: 20px;
     width: fit-content;
 }
 
-.meetingpage-header-title {
+.meetingpage-footer-title {
     font-size: 20px;
+}
+
+.meetingpage-footer-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: var(--qu-color-background-body);
+    border: 1px solid var(--qu-color-border);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.meetingpage-footer-button-active {
+    background-color: var(--qu-color-accent);
+    border-color: var(--qu-color-accent);
+    color: var(--qu-color-accent-foreground);
+    border-radius: 10px;
 }
 
 .meetingpage-body {
@@ -41,13 +61,17 @@
     margin-left: 10px;
     margin-right: 10px;
     border-radius: 8px;
-    max-height: calc(100vh - 70px);
+    max-height: calc(100vh - 80px);
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
     z-index: 10;
     border: 1px solid var(--qu-color-border);
     padding: 12px;
     gap: 12px;
+}
+
+.meetingpage-body-empty {
+    max-height: calc(100vh - 80px - 74px);
 }
 
 .meetingpage-body-participant {
