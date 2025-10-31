@@ -168,6 +168,7 @@ io.on("connection", async (socket) => {
                 profile: sessionData.user
             });
         }
+        socket.join("USER_" + user.userid!);
         if (user && user.status == "OFFLINE") {
             await setUserStatus(user.userid!, "ONLINE");
         }
@@ -179,8 +180,25 @@ io.on("connection", async (socket) => {
     }
     socket.on("status.set", async (data) => {
         if (!user) return;
+        if (data.status != "ONLINE" && data.status != "AWAY" && data.status != "BUSY" && data.status != "OFFLINE") return;
         await setUserStatus(user.userid!, data.status);
     });
+    socket.on("telephony.call", async (data) => {
+        if (!user) return;
+        socket.to("USER_" + data.to).emit("telephony.call", {
+            from: user.userid!,
+            to: data.to,
+            meetingid: data.meetingid,
+        });
+    })
+    socket.on("telephony.decline", async (data) => {
+        if (!user) return;
+        socket.to("USER_" + data.from).emit("telephony.decline", {
+            from: user.userid!,
+            to: data.to,
+            meetingid: data.meetingid,
+        });
+    })
     socket.on("status.get", async (callback: (status: string) => void) => {
         if (!user) return;
         const status = await getUserByUserId(user.userid!);

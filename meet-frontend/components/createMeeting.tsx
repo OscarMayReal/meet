@@ -88,7 +88,7 @@ export function Settings() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <SettingsIcon size={22} color="var(--qu-color-foreground)" strokeWidth={1.5} />
+                <SettingsIcon size={20} color="var(--qu-color-foreground)" />
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -112,7 +112,7 @@ export function TeamDashboard() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <UsersIcon size={22} color="var(--qu-color-foreground)" strokeWidth={1.5} />
+                <UsersIcon size={20} color="var(--qu-color-foreground)" />
             </DialogTrigger>
             <DialogContent style={{width: "100vw", height: "100vh", maxWidth: "100vw", maxHeight: "100vh", margin: "0", padding: "0", border: "none", borderRadius: "0", overflow: "hidden", boxShadow: "none"}}>
                 <iframe src="https://keystone.qplus.cloud/team" style={{width: "100vw", height: "100vh", margin: "0", padding: "0"}} />
