@@ -34,8 +34,8 @@ export async function getUsersByTenant(tenantId: string) {
     })
 }
 
-export function setUserStatus(userId: string, status: UserStatus) {
-    return prisma.user.update({
+export async function setUserStatus(userId: string, status: UserStatus) {
+    return await prisma.user.update({
         where: {
             userid: userId
         },

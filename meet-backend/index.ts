@@ -165,6 +165,23 @@ app.get("/directory", async (req, res) => {
     res.send(users)
 })
 
+app.get("/directory/:userid", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const user = await getUserByUserId(req.params.userid)
+    res.json(user)
+})
+
 io.on("connection", async (socket) => {
     let sessionData;
     let user;

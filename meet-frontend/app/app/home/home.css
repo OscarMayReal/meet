@@ -188,7 +188,7 @@
 }
 
 .directory-sidebar-item:hover {
-    background-color: rgba(0, 0, 0, 0.047);
+    background-color: rgba(0, 0, 0, 0.034);
 }
 
 .directory-sidebar-item-title {
@@ -201,4 +201,53 @@
 .directory-sidebar-item-subtitle {
     font-size: 14px;
     color: var(--qu-color-foreground-secondary);
+}
+
+.directory-mainarea-content {
+    flex-grow: 1;
+}
+
+.directory-mainarea-placeholder-title {
+    font-size: 20px;
+}
+
+.directory-mainarea-placeholder-subtitle {
+    font-size: 14px;
+    color: var(--qu-color-foreground-secondary);
+}
+
+.directory-page-infobox {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid var(--qu-color-border);
+    display: flex;
+    border-radius: 10px;
+    margin-bottom: 0px;
+}
+
+.directory-page-infobox-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid var(--qu-color-border);
+    display: flex;
+    border-radius: 10px;
+    margin-bottom: 0px;
+}
+
+.directory-page-infobox-title {
+    font-size: 20px;
+}
+
+.directory-page-infobox-subtitle {
+    font-size: 14px;
+    color: var(--qu-color-foreground-secondary);
+    margin-bottom: 5px;
 }
