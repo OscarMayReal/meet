@@ -28,3 +28,24 @@ model ScheduledMeeting {
     owner String
     tenant String
 }
+
+enum UserStatus {
+    ONLINE
+    OFFLINE
+    BUSY
+    AWAY
+}
+
+model User {
+    id String @id @default(cuid())
+    userid String @unique
+    name String
+    email String @unique
+    username String @unique
+    tenant String
+    profile Json?
+    status UserStatus @default(OFFLINE)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+    

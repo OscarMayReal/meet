@@ -11,6 +11,10 @@
     --qu-color-border: #e4e4e7;
     --qu-color-accent: #0C74AE;
     --qu-color-accent-foreground: white;
+    --qu-color-online: #00C851;
+    --qu-color-away: #FFC42C;
+    --qu-color-busy: #FF8A2C;
+    --qu-color-offline: #FF4D4D;
     font-family: figtree;
 }
 

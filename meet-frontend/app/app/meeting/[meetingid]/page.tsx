@@ -1,6 +1,6 @@
 "use client"
 import '@livekit/components-styles';
-import "@/app/meeting/[meetingid]/meeting.css"
+import "@/app/app/meeting/[meetingid]/meeting.css"
 import { Grid, HomeIcon, MicIcon, PhoneOffIcon, ScreenShareIcon, VideoIcon } from "lucide-react"
 import { useAuth } from "keystone-lib"
 import { useParams } from "next/navigation"

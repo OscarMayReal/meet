@@ -41,7 +41,7 @@ export function CreateMeeting() {
                                     setOpen(false)
                                     res.json().then((data) => {
                                         console.log(data)
-                                        router.push("/meeting/" + data.id)
+                                        router.push("/app/meeting/" + data.id)
                                     })
                                 }
                             })
@@ -74,7 +74,7 @@ export function JoinMeeting() {
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant={"outline"} onClick={() => {
-                            router.push("/meeting/" + name)
+                            router.push("/app/meeting/" + name)
                         }}><PlusIcon />Join</Button>
                     </DialogClose>
                 </DialogFooter>

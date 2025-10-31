@@ -1,13 +1,22 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { Server } from "socket.io";
 dotenv.config();
 
 import { VerifySession } from "./keystone.ts";
 import { AccessToken, Room, RoomServiceClient } from 'livekit-server-sdk';
 import { createScheduledMeeting, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
+import { createUser, getUserByUserId, setUserStatus } from "./userFunctions.ts";
+import { createServer } from "http";
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    }
+});
 
 function CreateMeetingCode() {
     const length = 10;
@@ -138,7 +147,52 @@ app.get("/meeting/scheduled", async (req, res) => {
     res.send(meetings)
 })
 
-app.listen(3001, () => {
-    console.log("Server started on port 3001");
+io.on("connection", async (socket) => {
+    let sessionData;
+    let user;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: socket.handshake.auth.sessionId,
+            appSecret: process.env.APP_SECRET!
+        });
+        user = await getUserByUserId(sessionData.user.id!);
+        if (!user) {
+            user = await createUser({
+                userId: sessionData.user.id!,
+                name: sessionData.user.name!,
+                email: sessionData.user.email!,
+                username: sessionData.user.username!,
+                tenant: sessionData.tenant.id!,
+                profile: sessionData.user
+            });
+        }
+        if (user && user.status == "OFFLINE") {
+            await setUserStatus(user.userid!, "ONLINE");
+        }
+        socket.emit("connection.auth.success", sessionData);
+    } catch (error) {
+        console.log(error);
+        socket.emit("connection.auth.error", JSON.stringify(error));
+        socket.disconnect();
+    }
+    socket.on("status.set", async (data) => {
+        if (!user) return;
+        await setUserStatus(user.userid!, data.status);
+    });
+    socket.on("status.get", async (callback: (status: string) => void) => {
+        if (!user) return;
+        const status = await getUserByUserId(user.userid!);
+        callback(status?.status!);
+    });
+    socket.on("disconnect", async () => {
+        if (!user) return;
+        if (user.status == "ONLINE" || user.status == "BUSY") {
+            await setUserStatus(user.userid!, "OFFLINE"); 
+        }
+        console.log("Client disconnected");
+    });
 });
-    
+
+server.listen(3001);
