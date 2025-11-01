@@ -30,6 +30,7 @@
     padding-top: 4px;
     color: var(--qu-color-foreground-secondary);
     -webkit-app-region: no-drag;
+    cursor: default;
 }
 
 .homepage-header-tabbar-item.active {
@@ -253,3 +254,15 @@
     color: var(--qu-color-foreground-secondary);
     margin-bottom: 5px;
 }
+
+.settings-tab-area {
+    padding: 20px;
+    background-color: var(--qu-color-background);
+    width: 100%;
+}
+
+.settings-tab-area-title {
+    font-size: 20px;
+    color: var(--qu-color-foreground);
+}
+

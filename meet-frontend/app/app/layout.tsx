@@ -12,7 +12,12 @@ export const appContext = createContext({
     auth: null as any,
     socket: null as Socket | null,
     setSocket: (socket: Socket) => {},
-    connected: false
+    connected: false,
+    theme: {
+        name: "light",
+        data: "light"
+    },
+    setTheme: (theme: {name: string, data: string}) => {}
 })
 
 export default function AppLayout({children}: {children: React.ReactNode}) {
@@ -20,6 +25,13 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
     const [socket, setSocket] = useState<Socket | null>(null)
     const [connected, setConnected] = useState(false)
     const router = useRouter()
+    const [theme, setTheme] = useState({
+        name: "light",
+        data: "light"
+    })
+    useEffect(() => {
+        document.body.setAttribute("data-theme", theme.data)
+    }, [theme])
     useEffect(() => {
         if (auth.loaded && auth.error) {
             window.location.href = "https://keystoneapi.qplus.cloud/auth/signin?redirectTo=" + window.location.href
@@ -28,6 +40,9 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
     const [isElectron, setIsElectron] = useState(false)
     useEffect(() => {
         setIsElectron(navigator.userAgent.includes("Electron"))
+        if (window.localStorage.getItem("theme")) {
+            setTheme(JSON.parse(window.localStorage.getItem("theme")!))
+        }
     }, [])
     useEffect(() => {
         if(!auth.data) return
@@ -70,5 +85,5 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
         })
     }, [auth])
     if(!connected || !auth.data) return <div className="homepage"></div>
-    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected}}>{children}<Toaster position="top-right"/></appContext.Provider>
+    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected, theme, setTheme}}>{children}<Toaster position="top-right"/></appContext.Provider>
 }

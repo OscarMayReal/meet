@@ -3,7 +3,22 @@
 
 @custom-variant dark (&:is(.dark *));
 
-* {
+body[data-theme="dark"] {
+    --qu-color-background: #2e2e2e;
+    --qu-color-background-body: #3d3d3d;
+    --qu-color-foreground: #ffffff;
+    --qu-color-foreground-secondary: #bebebe;
+    --qu-color-border: #575757;
+    --qu-color-accent: #6ec1ee;
+    --qu-color-accent-foreground: rgb(0, 0, 0);
+    --qu-color-online: #00C851;
+    --qu-color-away: #FFC42C;
+    --qu-color-busy: #FF8A2C;
+    --qu-color-offline: #FF4D4D;
+    font-family: figtree;
+}
+
+body[data-theme="light"] {
     --qu-color-background: rgb(245, 245, 245);
     --qu-color-background-body: white;
     --qu-color-foreground: #666666;
@@ -93,8 +108,9 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
+[data-theme="dark"] {
+  /* --background: oklch(0.145 0 0); */
+  --background: #3d3d3d;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);

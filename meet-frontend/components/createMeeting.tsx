@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAuth } from "keystone-lib"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
+import { CalendarIcon, Paintbrush2Icon, PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldTitle } from "./ui/field";
 import router from "next/router";
+import { appContext } from "@/app/app/layout";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function CreateMeeting() {
     const [isElectron, setIsElectron] = useState(false)
@@ -100,24 +102,82 @@ export function JoinMeeting() {
 }
 
 export function Settings() {
+    const availableThemes = [
+        {
+            name: "Light",
+            data: "light"
+        },
+        {
+            name: "Dark",
+            data: "dark"
+        }
+    ]
+    const {theme, setTheme} = useContext(appContext)
     const [open, setOpen] = useState(false)
+    const [tab, setTab] = useState("general")
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <SettingsIcon size={20} color="var(--qu-color-foreground)" />
             </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Settings</DialogTitle>
-                    <DialogDescription>
-                        Configure your settings
-                    </DialogDescription>
+            <DialogContent style={{
+                padding: 0,
+                gap: 0,
+                overflow: "hidden",
+            }}>
+                <DialogHeader style={{
+                    height: 60,
+                    borderBottom: "1px solid var(--qu-color-border)",
+                }}>
+                    <div className="homepage-header-tabbar" style={{
+                        height: 60,
+                    }}>
+                        <TabItem name="General" Icon={SettingsIcon} active={tab === "general"} onClick={() => setTab("general")} />
+                        <TabItem name="Devices" Icon={VideoIcon} active={tab === "devices"} onClick={() => setTab("devices")} />
+                        <TabItem name="Theme" Icon={Paintbrush2Icon} active={tab === "theme"} onClick={() => setTab("theme")} />
+                    </div>
                 </DialogHeader>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant={"outline"}>Close</Button>
-                    </DialogClose>
-                </DialogFooter>
+                <div style={{
+                    height: "calc(100% - 60px)",
+                }}>
+                    {tab === "general" && <div className="settings-tab-area">
+                        <div className="settings-tab-area-title">
+                            <h1>General</h1>
+                        </div>
+                    </div>}
+                    {tab === "devices" && <div className="settings-tab-area">
+                        <div className="settings-tab-area-title">
+                            <h1>Devices</h1>
+                        </div>
+                    </div>}
+                    {tab === "theme" && <div className="settings-tab-area">
+                        <div className="settings-tab-area-title">
+                            <h1>Theme</h1>
+                        </div>
+                        <Select style={{
+                            width: "100%"
+                        }} value={theme.name} onValueChange={(value) => {
+                            setTheme(availableThemes.find((theme) => theme.name === value)!)
+                            window.localStorage.setItem("theme", JSON.stringify(availableThemes.find((theme) => theme.name === value)!))
+                        }}>
+                            <SelectTrigger style={{
+                                backgroundColor: "var(--background)",
+                                WebkitAppRegion: "no-drag",
+                                width: "100%",
+                                marginTop: "10px"
+                            }}>
+                                <SelectValue placeholder="Select a theme" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {availableThemes.map((theme) => (
+                                    <SelectItem key={theme.name} value={theme.name}>
+                                        {theme.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>}
+                </div>
             </DialogContent>
         </Dialog>
     )
@@ -197,5 +257,14 @@ export function ScheduleMeeting({dataHook}: {dataHook: any}) {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+    )
+}
+
+function TabItem({name, Icon, active, onClick}: {name: string, Icon: React.ElementType, active: boolean, onClick: () => void}) {
+    return (
+        <div className={"homepage-header-tabbar-item" + (active ? " active" : "")} onClick={onClick}>
+            <Icon className="homepage-header-tabbar-item-icon" size={20} />
+            <h1 className="homepage-header-tabbar-item-text">{name}</h1>
+        </div>
     )
 }
