@@ -201,6 +201,54 @@ body[data-theme="light"] {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.bat-mouse-follower {
+    display: none;
+}
+
+body[data-theme="spooky"] > .bat-mouse-follower {
+    display: block;
+}
+
+.settings-tab-area {
+    padding: 20px;
+    background-color: var(--qu-color-background);
+    width: 100%;
+}
+
+.settings-tab-area-title {
+    font-size: 20px;
+    color: var(--qu-color-foreground);
+}
+
+.homepage-header-tabbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+    height: 60px;
+}
+
+.homepage-header-tabbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+    color: var(--qu-color-foreground-secondary);
+    -webkit-app-region: no-drag;
+    cursor: default;
+}
+
+.homepage-header-tabbar-item.active {
+    color: var(--qu-color-accent);
+}
+
+.homepage-header-tabbar-item-text {
+    font-size: 14px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

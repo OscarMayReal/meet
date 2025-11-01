@@ -85,7 +85,7 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
         })
     }, [auth])
     if(!connected || !auth.data) return <div className="homepage"></div>
-    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected, theme, setTheme}}>{children}<Toaster position="top-right"/><BatMouseFollower/></appContext.Provider>
+    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected, theme, setTheme}}>{children}<Toaster position="top-right"/>{theme.data == "spooky" ? <BatMouseFollower/> : null}</appContext.Provider>
 }
 
 function BatMouseFollower() {

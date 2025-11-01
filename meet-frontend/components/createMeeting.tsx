@@ -101,7 +101,7 @@ export function JoinMeeting() {
     )
 }
 
-export function Settings() {
+export function Settings({size}: {size?: number}) {
     const availableThemes = [
         {
             name: "Light",
@@ -122,7 +122,7 @@ export function Settings() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <SettingsIcon size={20} color="var(--qu-color-foreground)" />
+                <SettingsIcon size={size || 20} color="var(--qu-color-foreground)" />
             </DialogTrigger>
             <DialogContent style={{
                 padding: 0,
