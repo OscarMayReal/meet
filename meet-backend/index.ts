@@ -203,9 +203,9 @@ io.on("connection", async (socket) => {
                 profile: sessionData.user
             });
         }
-        socket.join("USER_" + user.userid!);
+        socket.join("USER_" + sessionData.user.id!);
         if (user && user.status == "OFFLINE") {
-            await setUserStatus(user.userid!, "ONLINE");
+            await setUserStatus(sessionData.user.id!, "ONLINE");
         }
         socket.emit("connection.auth.success", sessionData);
     } catch (error) {

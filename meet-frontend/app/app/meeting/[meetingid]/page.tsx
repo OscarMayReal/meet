@@ -58,8 +58,16 @@ function MeetingPreJoin({roomid, joinedOnce, setJoinedOnce, token}: {roomid: str
             })
         }
     }, [token, searchParams])
+    const [isElectron, setIsElectron] = useState<boolean | null>(null)
+    useEffect(() => {
+        setIsElectron(navigator.userAgent.includes("Electron"))
+    }, [])
     if (joinedOnce && searchParams.get("call") === "true") {
-        router.push("/app")
+        if (isElectron) {
+            window.close()
+        } else if (isElectron === false) {
+            router.push("/app")
+        }
     }
     if(searchParams.get("call") === "true") return <div className="meetingpage-prejoin">
         <h1 className="meetingpage-prejoin-title">Connecting Call</h1>

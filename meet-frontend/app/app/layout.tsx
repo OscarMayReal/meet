@@ -25,6 +25,10 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
             window.location.href = "https://keystoneapi.qplus.cloud/auth/signin?redirectTo=" + window.location.href
         }
     }, [auth])
+    const [isElectron, setIsElectron] = useState(false)
+    useEffect(() => {
+        setIsElectron(navigator.userAgent.includes("Electron"))
+    }, [])
     useEffect(() => {
         if(!auth.data) return
         const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!, {
@@ -51,7 +55,11 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
                         action: <Button style={{
                             marginLeft: "auto"
                         }} variant="outline" onClick={() => {
-                            router.push("/app/meeting/" + data.meetingid + "?call=true")
+                            if (isElectron) {
+                                window.open("/app/meeting/" + data.meetingid + "?call=true", "_blank")
+                            } else {
+                                router.push("/app/meeting/" + data.meetingid + "?call=true")
+                            }
                             audio.pause()
                             audio.remove()
                             toast.dismiss()

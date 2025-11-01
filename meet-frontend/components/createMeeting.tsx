@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "keystone-lib"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -9,6 +9,10 @@ import { Field, FieldGroup, FieldTitle } from "./ui/field";
 import router from "next/router";
 
 export function CreateMeeting() {
+    const [isElectron, setIsElectron] = useState(false)
+    useEffect(() => {
+        setIsElectron(navigator.userAgent.includes("Electron"))
+    }, [])
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
     const auth = useAuth({appId: process.env.NEXT_PUBLIC_APP_ID!, keystoneUrl: process.env.NEXT_PUBLIC_KEYSTONE_URL!})
@@ -41,7 +45,11 @@ export function CreateMeeting() {
                                     setOpen(false)
                                     res.json().then((data) => {
                                         console.log(data)
-                                        router.push("/app/meeting/" + data.id)
+                                        if (isElectron) {
+                                            window.open("/app/meeting/" + data.id, "_blank")
+                                        } else {
+                                            router.push("/app/meeting/" + data.id)
+                                        }
                                     })
                                 }
                             })
@@ -58,6 +66,10 @@ export function JoinMeeting() {
     const [name, setName] = useState("")
     const auth = useAuth({appId: process.env.NEXT_PUBLIC_APP_ID!, keystoneUrl: process.env.NEXT_PUBLIC_KEYSTONE_URL!})
     const router = useRouter()
+    const [isElectron, setIsElectron] = useState(false)
+    useEffect(() => {
+        setIsElectron(navigator.userAgent.includes("Electron"))
+    }, [])
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -74,7 +86,11 @@ export function JoinMeeting() {
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant={"outline"} onClick={() => {
-                            router.push("/app/meeting/" + name)
+                            if (isElectron) {
+                                window.open("/app/meeting/" + name, "_blank")
+                            } else {
+                                router.push("/app/meeting/" + name)
+                            }
                         }}><PlusIcon />Join</Button>
                     </DialogClose>
                 </DialogFooter>
