@@ -34,6 +34,10 @@ export default function Layout({children}: {children: React.ReactNode}) {
                 <Settings />
             </div>
             {children}
+            <img className="theme-spooky-pumpkin theme-spooky-pumpkin-1" src="/pumpkin.png" />
+            <img className="theme-spooky-pumpkin theme-spooky-pumpkin-2" src="/pumpkin.png" />
+            <img className="theme-spooky-pumpkin theme-spooky-pumpkin-3" src="/pumpkin.png" />
+            <img className="theme-spooky-pumpkin theme-spooky-pumpkin-4" src="/pumpkin.png" />
         </div>
     )
 }

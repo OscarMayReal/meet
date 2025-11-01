@@ -110,6 +110,10 @@ export function Settings() {
         {
             name: "Dark",
             data: "dark"
+        },
+        {
+            name: "Spooky",
+            data: "spooky"
         }
     ]
     const {theme, setTheme} = useContext(appContext)

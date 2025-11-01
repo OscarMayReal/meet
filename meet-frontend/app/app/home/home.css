@@ -266,3 +266,56 @@
     color: var(--qu-color-foreground);
 }
 
+.theme-spooky-pumpkin {
+    display: none;
+}
+
+body[data-theme="spooky"] > .homepage > .theme-spooky-pumpkin {
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+.theme-spooky-pumpkin-1 {
+    bottom: -250;
+    left: -100;
+    width: auto;
+    height: 600;
+    transform: rotate(0deg);
+}
+
+.theme-spooky-pumpkin-2 {
+    bottom: -200;
+    left: -300;
+    width: auto;
+    height: 600;
+    transform: rotate(20deg);
+}
+
+.theme-spooky-pumpkin-3 {
+    bottom: -200;
+    right: -300;
+    width: auto;
+    height: 600;
+    transform: rotate(-20deg);
+}
+
+.theme-spooky-pumpkin-4 {
+    bottom: -250;
+    right: -100;
+    width: auto;
+    height: 600;
+    transform: rotate(10deg);
+}
+
+.bat-mouse-follower {
+    display: none;
+}
+
+body[data-theme="spooky"] > .bat-mouse-follower {
+    display: block;
+}
+
+

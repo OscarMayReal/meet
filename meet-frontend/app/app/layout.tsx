@@ -85,5 +85,34 @@ export default function AppLayout({children}: {children: React.ReactNode}) {
         })
     }, [auth])
     if(!connected || !auth.data) return <div className="homepage"></div>
-    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected, theme, setTheme}}>{children}<Toaster position="top-right"/></appContext.Provider>
+    return <appContext.Provider value={{auth: auth!, socket, setSocket, connected, theme, setTheme}}>{children}<Toaster position="top-right"/><BatMouseFollower/></appContext.Provider>
 }
+
+function BatMouseFollower() {
+    const [mousePosition, setMousePosition] = useState({x: 0, y: 0})
+    const [batPosition, setBatPosition] = useState({x: 0, y: 0})
+    useEffect(() => {
+        document.addEventListener("mousemove", (e: MouseEvent) => {
+            setMousePosition({x: e.clientX, y: e.clientY})
+        })
+        const interval = setInterval(() => {
+            setBatPosition({x: batPosition.x + (mousePosition.x - batPosition.x) * 0.1, y: batPosition.y + (mousePosition.y - batPosition.y) * 0.1})
+        }, 16)
+        return () => {
+            clearInterval(interval)
+            document.removeEventListener("mousemove", (e: MouseEvent) => {
+                setMousePosition({x: e.clientX, y: e.clientY})
+            })
+        }
+    }, [batPosition])
+    return <img src="/bat.png" className="bat-mouse-follower" style={{
+        position: "fixed",
+        width: 100,
+        height: 100,
+        top: batPosition.y,
+        left: batPosition.x,
+        zIndex: 9999,
+        pointerEvents: "none",
+    }}/>
+}
+    
