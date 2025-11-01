@@ -6,7 +6,7 @@ dotenv.config();
 
 import { VerifySession } from "./keystone.ts";
 import { AccessToken, Room, RoomServiceClient } from 'livekit-server-sdk';
-import { createScheduledMeeting, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
+import { createScheduledMeeting, getScheduledMeetingById, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
 import { createUser, getUserByUserId, getUsersByTenant, setUserStatus } from "./userFunctions.ts";
 import { createServer } from "http";
 
@@ -89,14 +89,42 @@ app.post("/meeting/join", async (req, res) => {
     })
     const room = await rsc.listRooms()
     const roomData = room.find((room) => room.name === req.body.id)
-    if (!roomData) {
+    if (!roomData && !req.body.id.startsWith("meeting_")) {
         return res.status(404).send("Room not found");
     }
-    token.addGrant({
-        room: roomData.name,
-        roomJoin: true,
-        roomAdmin: JSON.parse(roomData.metadata!).ownedBy === identity.id,
-    })
+    if (req.body.id.startsWith("meeting_")) {
+        const meeting = await getScheduledMeetingById(req.body.id.replace("meeting_", ""))
+        if (!meeting || meeting.owner !== identity.id || (meeting.limitToInvitees && !meeting.invitees?.includes(identity.id!))) {
+            return res.status(404).send("Meeting not found");
+        }
+        const room = await rsc.createRoom({
+            name: meeting.id,
+            maxParticipants: 8,
+            metadata: JSON.stringify({
+                ownedBy: identity.id,
+                ownerName: identity.name,
+                meetingname: meeting.name,
+                meetingDescription: meeting.description,
+                meetingStartTime: meeting.startTime,
+                meetingEndTime: meeting.endTime,
+                meetingInvitees: meeting.invitees,
+                meetingLimitToInvitees: meeting.limitToInvitees,
+                meetingOwner: meeting.owner,
+                meetingTenant: meeting.tenant,
+            })
+        })
+        token.addGrant({
+            room: meeting.id,
+            roomJoin: true,
+            roomAdmin: meeting.owner === identity.id,
+        })
+    } else if (roomData) {
+        token.addGrant({
+            room: roomData.name,
+            roomJoin: true,
+            roomAdmin: JSON.parse(roomData.metadata!).ownedBy === identity.id,
+        })
+    }
     const jwt = await token.toJwt()
     res.json({id: req.body.id, name: req.body.name, token: jwt});
 })

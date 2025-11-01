@@ -1,13 +1,13 @@
 "use client"
 import '@livekit/components-styles';
 import "@/app/app/meeting/[meetingid]/meeting.css"
-import { Grid, HomeIcon, InfoIcon, MessageSquareIcon, MicIcon, PanelRightIcon, PhoneOffIcon, ScreenShareIcon, SendHorizonalIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
+import { CrownIcon, Grid, HomeIcon, InfoIcon, MessageSquareIcon, MicIcon, PanelRightIcon, PhoneOffIcon, ScreenShareIcon, SendHorizonalIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
 import { useAuth } from "keystone-lib"
 import { useSearchParams, useParams } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
 import { ConnectionQualityIndicator, GridLayout, LiveKitRoom, useRoomContext, useRemoteParticipants, useTracks, VideoTrack, ControlBar, TrackLoop, useTrackRefContext, PreJoin, RoomAudioRenderer, useTrackToggle, ChatIcon, useChat, Chat, useLocalParticipant } from '@livekit/components-react';
 import { useToken } from "@/lib/useToken"
-import { ChatMessage, Track } from "livekit-client"
+import { ChatMessage, RemoteParticipant, Track } from "livekit-client"
 import { ParticipantTile } from "@livekit/components-react";
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -158,6 +158,24 @@ function Sidebar({chat, sidebarOpen, sidebarPage, setSidebarPage, setSidebarOpen
         <div className="meetingpage-sidebar">
             <SidebarHeader Icon={sidebarPage === "chat" ? MessageSquareIcon : sidebarPage === "info" ? InfoIcon : sidebarPage === "users" ? UsersIcon : VideoIcon} title={sidebarPage === "chat" ? "Chat" : sidebarPage === "info" ? "Info" : sidebarPage === "users" ? "Users" : "General"} setSidebarOpen={setSidebarOpen}/>
             {sidebarPage === "chat" && <ChatSidebar chat={chat}/>}
+            {sidebarPage === "users" && <MembersList/>}
+            {sidebarPage === "info" && <InfoSidebar/>}
+        </div>
+    )
+}
+
+function InfoSidebar() {
+    const room = useRoomContext()
+    return (
+        <div className="meetingpage-sidebar-mainarea">
+            <div className="flex flex-col gap-2 flex-grow overflow-y-auto p-3 pb-0">
+                {room.name && <p className="meetingpage-sidebar-info-item">Meeting ID: {room.name}</p>}
+                {JSON.parse(room.metadata!).meetingname && <p className="meetingpage-sidebar-info-item">Meeting Name: {JSON.parse(room.metadata!).meetingname}</p>}
+                {JSON.parse(room.metadata!).ownerName && <p className="meetingpage-sidebar-info-item">Meeting Owner: {JSON.parse(room.metadata!).ownerName}</p>}
+                {JSON.parse(room.metadata!).meetingDescription && <p className="meetingpage-sidebar-info-item">Meeting Description: {JSON.parse(room.metadata!).meetingDescription}</p>}
+                {JSON.parse(room.metadata!).meetingStartTime && <p className="meetingpage-sidebar-info-item">Meeting Start Time: {new Date(JSON.parse(room.metadata!).meetingStartTime).toLocaleString()}</p>}
+                {JSON.parse(room.metadata!).meetingEndTime && <p className="meetingpage-sidebar-info-item">Meeting End Time: {new Date(JSON.parse(room.metadata!).meetingEndTime).toLocaleString()}</p>}
+            </div>
         </div>
     )
 }
@@ -182,6 +200,35 @@ function ChatSidebar({chat}: {chat: any}) {
                     chat.send(message)
                     setMessage("")
                 }} variant="outline"><SendHorizonalIcon /></Button>
+            </div>
+        </div>
+    )
+}
+
+function MembersList() {
+    const participants = useRemoteParticipants()
+    const room = useRoomContext()
+    return (
+        <div className="meetingpage-sidebar-mainarea">
+            <div className="meetingpage-sidebar-memberlist">
+                <MemberItem key={room.localParticipant.identity} participant={room.localParticipant}/>
+                {participants.map((participant: RemoteParticipant) => {
+                    return <MemberItem key={participant.identity} participant={participant}/>
+                })}
+            </div>
+        </div>
+    )
+}
+
+function MemberItem({participant}: {participant: RemoteParticipant}) {
+    return (
+        <div className="meetingpage-sidebar-memberitem">
+            <Avatar className="meetingpage-sidebar-memberitem-avatar">
+                <AvatarFallback className='text-2xl meetingpage-sidebar-memberitem-avatar-fallback'>{JSON.parse(participant.identity).name.charAt(0)}{JSON.parse(participant.identity).name.charAt(1)}</AvatarFallback>
+            </Avatar>
+            <div>
+                <div className="meetingpage-sidebar-memberitem-name">{JSON.parse(participant.identity).name}</div>
+                <div className="meetingpage-sidebar-memberitem-email">{JSON.parse(participant.identity).email}</div>
             </div>
         </div>
     )
@@ -234,7 +281,7 @@ function MeetingFooter({sidebarOpen, sidebarPage, setSidebarPage, setSidebarOpen
     return (
         <div className="meetingpage-footer">
             <div style={{flexGrow: 1, width: "50%"}}>
-                <div className="meetingpage-footer-title">{params.meetingid}</div>
+                <div className="meetingpage-footer-title">{params.meetingid?.startsWith("meeting_") ? JSON.parse(room.metadata!).meetingname : params.meetingid}</div>
             </div>
             <MeetingFooterButton Icon={VideoIcon} onClick={() => {toggleCam()}} active={camEnabled} />
             <MeetingFooterButton Icon={MicIcon} onClick={() => {toggleMic()}} active={micEnabled} />
@@ -252,7 +299,10 @@ function MeetingFooter({sidebarOpen, sidebarPage, setSidebarPage, setSidebarOpen
 
 function SidebarTabIcon({sidebarPage, setSidebarPage, sidebarOpen, setSidebarOpen, Icon, thisSidebarPage}: {sidebarPage: string, setSidebarPage: (sidebarPage: string) => void, sidebarOpen: boolean, setSidebarOpen: (sidebarOpen: boolean) => void, Icon: React.ElementType, thisSidebarPage: string}) {
     return (
-        <Icon className="meetingpage-sidebar-tab-icon" size={22} onClick={() => {
+        <Icon className="meetingpage-sidebar-tab-icon" style={{
+            color: sidebarPage === thisSidebarPage && sidebarOpen ? "var(--qu-color-accent)" : "var(--qu-color-foreground)"
+        }}
+        size={22} onClick={() => {
             if (!sidebarOpen) {
                 setSidebarPage(thisSidebarPage)
                 setSidebarOpen(true)

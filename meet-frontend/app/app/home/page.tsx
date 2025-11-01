@@ -83,7 +83,7 @@ function ScheduledMeeting({isFirst, meeting}: {isFirst: boolean, meeting: {
                 <h1 className="homepage-scheduledmeeting-time-text">{new Date(meeting.startTime).getHours() != 0 ? new Date(meeting.startTime).getHours() > 9 ? new Date(meeting.startTime).getHours() : "0" + new Date(meeting.startTime).getHours() : "00"}:{new Date(meeting.startTime).getMinutes() != 0 ? new Date(meeting.startTime).getMinutes() > 9 ? new Date(meeting.startTime).getMinutes() : "0" + new Date(meeting.startTime).getMinutes() : "00"} - {new Date(meeting.endTime).getHours() != 0 ? new Date(meeting.endTime).getHours() > 9 ? new Date(meeting.endTime).getHours() : "0" + new Date(meeting.endTime).getHours() : "00"}:{new Date(meeting.endTime).getMinutes() != 0 ? new Date(meeting.endTime).getMinutes() > 9 ? new Date(meeting.endTime).getMinutes() : "0" + new Date(meeting.endTime).getMinutes() : "00"} • {new Date(meeting.startTime).getDate()}/{new Date(meeting.startTime).getMonth() + 1}/{new Date(meeting.startTime).getFullYear()}</h1>
             </div>
             {isFirst && <div className="homepage-scheduledmeeting-buttons mt-[10px]">
-                <Button variant="outline" className="w-full" onClick={() => router.push("/app/meeting/" + meeting.id)}><DoorClosedIcon />Join</Button>
+                <Button variant="outline" className="w-full" onClick={() => router.push("/app/meeting/meeting_" + meeting.id)}><DoorClosedIcon />Join</Button>
             </div>}
         </div>
     )
