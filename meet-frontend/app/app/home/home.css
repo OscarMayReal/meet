@@ -12,6 +12,16 @@
     flex-direction: column;
 }
 
+.meeting-invitees-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid var(--qu-color-border);
+    padding: 10px;
+    border-radius: 8px;
+}
+
 .homepage-header {
     -webkit-app-region: drag;
     display: flex;
@@ -269,3 +279,37 @@ body[data-theme="spooky"] > .homepage > .theme-spooky-pumpkin {
     height: 600;
     transform: rotate(10deg);
 }
+
+.meetingpage-sidebar-memberitem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.meetingpage-sidebar-memberitem-avatar {
+    border: 1px solid var(--qu-color-border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: var(--qu-color-background);
+}
+
+.meetingpage-sidebar-memberitem-avatar-fallback {
+    background-color: var(--qu-color-background);
+    font-size: 20px;
+}
+
+.meetingpage-sidebar-memberitem-name {
+    font-size: 16px;
+}
+
+.meetingpage-sidebar-memberitem-email {
+    font-size: 14px;
+    color: var(--qu-color-foreground-secondary);
+}
+
+.meetingpage-sidebar-memberitem:not(:last-child) {  
+    border-bottom: 1px solid var(--qu-color-border);
+    padding-bottom: 10px;
+}
+    

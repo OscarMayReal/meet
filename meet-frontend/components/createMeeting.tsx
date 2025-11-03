@@ -5,10 +5,11 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, Paintbrush2Icon, PlusIcon, SettingsIcon, TextCursorInput, TextCursorInputIcon, UsersIcon, VideoIcon, XIcon } from "lucide-react"
 import { Input } from "@/components/ui/input";
-import { Field, FieldGroup, FieldTitle } from "./ui/field";
+import { Field, FieldDescription, FieldGroup, FieldTitle } from "./ui/field";
 import router from "next/router";
 import { appContext } from "@/app/app/layout";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useMediaDevices, usePersistentUserChoices } from "@livekit/components-react";
 
 export function CreateMeeting() {
     const [isElectron, setIsElectron] = useState(false)
@@ -118,7 +119,7 @@ export function Settings({size}: {size?: number}) {
     ]
     const {theme, setTheme} = useContext(appContext)
     const [open, setOpen] = useState(false)
-    const [tab, setTab] = useState("general")
+    const [tab, setTab] = useState("devices")
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -136,7 +137,7 @@ export function Settings({size}: {size?: number}) {
                     <div className="homepage-header-tabbar" style={{
                         height: 60,
                     }}>
-                        <TabItem name="General" Icon={SettingsIcon} active={tab === "general"} onClick={() => setTab("general")} />
+                        {/* <TabItem name="General" Icon={SettingsIcon} active={tab === "general"} onClick={() => setTab("general")} /> */}
                         <TabItem name="Devices" Icon={VideoIcon} active={tab === "devices"} onClick={() => setTab("devices")} />
                         <TabItem name="Theme" Icon={Paintbrush2Icon} active={tab === "theme"} onClick={() => setTab("theme")} />
                     </div>
@@ -144,15 +145,16 @@ export function Settings({size}: {size?: number}) {
                 <div style={{
                     height: "calc(100% - 60px)",
                 }}>
-                    {tab === "general" && <div className="settings-tab-area">
+                    {/* {tab === "general" && <div className="settings-tab-area">
                         <div className="settings-tab-area-title">
                             <h1>General</h1>
                         </div>
-                    </div>}
+                    </div>} */}
                     {tab === "devices" && <div className="settings-tab-area">
-                        <div className="settings-tab-area-title">
+                        <div className="settings-tab-area-title mb-2">
                             <h1>Devices</h1>
                         </div>
+                        <MediaDeviceSwitcher />
                     </div>}
                     {tab === "theme" && <div className="settings-tab-area">
                         <div className="settings-tab-area-title">
@@ -184,6 +186,51 @@ export function Settings({size}: {size?: number}) {
                 </div>
             </DialogContent>
         </Dialog>
+    )
+}
+
+export function MediaDeviceSwitcher() {
+    const videoDevices = useMediaDevices({kind: "videoinput"})
+    const audioDevices = useMediaDevices({kind: "audioinput"})
+    const userchoices = usePersistentUserChoices()
+    if(videoDevices.length === 0 || audioDevices.length === 0) return null
+    return (
+        <>
+            <FieldGroup>
+                <Field>
+                    <FieldTitle>Video Device</FieldTitle>
+                    <FieldDescription>Select a video device to use for meetings</FieldDescription>
+                    <Select value={userchoices.userChoices.videoDeviceId} onValueChange={(value) => userchoices.saveVideoInputDeviceId(value)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a video device" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {videoDevices.map((device) => (
+                                <SelectItem key={device.label} value={device.deviceId}>
+                                    {device.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </Field>
+                <Field>
+                    <FieldTitle>Audio Device</FieldTitle>
+                    <FieldDescription>Select an audio device to use for meetings</FieldDescription>
+                    <Select value={userchoices.userChoices.audioDeviceId} onValueChange={(value) => userchoices.saveAudioInputDeviceId(value)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select an audio device" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {audioDevices.map((device) => (
+                                <SelectItem key={device.label} value={device.deviceId}>
+                                    {device.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </Field>
+            </FieldGroup>
+        </>
     )
 }
 

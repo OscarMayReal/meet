@@ -6,7 +6,7 @@ dotenv.config();
 
 import { VerifySession } from "./keystone.ts";
 import { AccessToken, Room, RoomServiceClient } from 'livekit-server-sdk';
-import { createScheduledMeeting, getScheduledMeetingById, getScheduledMeetingsForUser } from "./scheduleFunctions.ts";
+import { createScheduledMeeting, deleteScheduledMeeting, getScheduledMeetingById, getScheduledMeetingsForUser, removeScheduleParticipent, updateScheduledMeeting } from "./scheduleFunctions.ts";
 import { createUser, getUserByUserId, getUsersByTenant, setUserStatus } from "./userFunctions.ts";
 import { createServer } from "http";
 
@@ -94,7 +94,7 @@ app.post("/meeting/join", async (req, res) => {
     }
     if (req.body.id.startsWith("meeting_")) {
         const meeting = await getScheduledMeetingById(req.body.id.replace("meeting_", ""))
-        if (!meeting || meeting.owner !== identity.id || (meeting.limitToInvitees && !meeting.invitees?.includes(identity.id!))) {
+        if (!meeting || (meeting.limitToInvitees && (!meeting.invitees?.includes(identity.id!) || meeting.owner !== identity.id))) {
             return res.status(404).send("Meeting not found");
         }
         const room = await rsc.createRoom({
@@ -171,8 +171,58 @@ app.get("/meeting/scheduled", async (req, res) => {
         res.status(401).send("Unauthorized");
     }
     const identity = sessionData.user
-    const meetings = await getScheduledMeetingsForUser(identity.id)
+    var meetings = await getScheduledMeetingsForUser(identity.id)
+    var meetingsfilter = meetings.filter((meeting) => meeting.startTime < new Date())
+    for (let i = 0; i < meetingsfilter.length; i++) {
+        await deleteScheduledMeeting(meetingsfilter[i].id)
+    }
+    var meetings = await getScheduledMeetingsForUser(identity.id)
     res.send(meetings)
+})
+
+app.post("/meeting/scheduled/:id/addinvitee", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const identity = sessionData.user
+    const meeting = await getScheduledMeetingById(req.params.id)
+    if (!meeting || meeting.owner !== identity.id) {
+        return res.status(404).send("Meeting not found");
+    }
+    meeting.invitees.push(req.body.invitee)
+    await updateScheduledMeeting(req.params.id, meeting)
+    res.send(meeting)
+})
+
+app.post("/meeting/scheduled/:id/removeinvitee", async (req, res) => {
+    let sessionData;
+    try {
+        sessionData = await VerifySession({
+            appId: process.env.APP_ID!,
+            keystoneUrl: process.env.KEYSTONE_URL!,
+            sessionId: req.headers["authorization"]!.split(" ")[1],
+            appSecret: process.env.APP_SECRET!
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(401).send("Unauthorized");
+    }
+    const identity = sessionData.user
+    const meeting = await getScheduledMeetingById(req.params.id)
+    if (!meeting || meeting.owner !== identity.id) {
+        return res.status(404).send("Meeting not found");
+    }
+    await removeScheduleParticipent(req.params.id, req.body.invitee)
+    res.send(meeting)
 })
 
 app.get("/directory", async (req, res) => {

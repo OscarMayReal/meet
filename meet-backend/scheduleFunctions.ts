@@ -69,3 +69,20 @@ export async function updateScheduledMeeting(id: string, info: {name: string, de
         }
     })
 }
+
+export async function removeScheduleParticipent(meetingId: string, userId: string) {
+    const meeting = await getScheduledMeetingById(meetingId)
+    if (!meeting) return
+    meeting.invitees = meeting.invitees.filter((id) => id !== userId)
+    return await updateScheduledMeeting(meetingId, {
+        name: meeting.name,
+        description: meeting.description!,
+        startTime: meeting.startTime,
+        endTime: meeting.endTime,
+        invitees: meeting.invitees,
+        room: meeting.room!,
+        limitToInvitees: meeting.limitToInvitees,
+        owner: meeting.owner,
+        tenant: meeting.tenant
+    })
+}

@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+  font-family: figtree;
+}
+
 body[data-theme="dark"] {
     --qu-color-background: #2e2e2e;
     --qu-color-background-body: #3d3d3d;

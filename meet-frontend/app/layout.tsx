@@ -20,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        data-theme="spooky"
         className={`${figtree.variable} antialiased`}
       >
         {children}

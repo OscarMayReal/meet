@@ -14,7 +14,7 @@ function createWindow() {
         },
         titleBarStyle: "hiddenInset"
     });
-    mainWindow.loadURL("https://localhost:3000/app");
+    mainWindow.loadURL("https://meet.quntem.com/app");
 }
 
 app.whenReady().then(() => {

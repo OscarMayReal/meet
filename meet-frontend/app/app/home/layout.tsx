@@ -5,8 +5,9 @@ import { TeamDashboard, Settings } from "@/components/createMeeting";
 import { appContext } from "@/app/app/layout";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "keystone-lib";
 export default function Layout({children}: {children: React.ReactNode}) {
-    const {socket} = useContext(appContext)
+    const {socket, auth} = useContext(appContext)
     const router = useRouter()
     const pathname = usePathname()
     const [isElectron, setIsElectron] = useState(false)
@@ -30,7 +31,7 @@ export default function Layout({children}: {children: React.ReactNode}) {
                     <TabItem name="Home" Icon={HomeIcon} active={pathname === "/app/home"} onClick={() => router.push("/app/home")} />
                     <TabItem name="Directory" Icon={BookUserIcon} active={pathname.startsWith("/app/home/directory")} onClick={() => router.push("/app/home/directory")} />
                 </div>
-                <TeamDashboard />
+                {auth.data?.tenant?.type === "Team" && <TeamDashboard />}
                 <Settings />
             </div>
             {children}

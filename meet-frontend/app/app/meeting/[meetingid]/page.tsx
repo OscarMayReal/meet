@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Settings } from '@/components/createMeeting';
 import { Input } from '@/components/ui/input';
+import { appContext } from '@/app/app/layout';
+import { useContext } from "react";
 export default function MeetingPage() {
     const params = useParams()
     const token = useToken({meetingid: params.meetingid!})
@@ -23,6 +25,7 @@ export default function MeetingPage() {
     const router = useRouter()
     const [emptyaudio, setEmptyAudio] = useState<HTMLAudioElement | null>(new Audio())
     const [joinedOnce, setJoinedOnce] = useState(false)
+    const {socket} = useContext(appContext)
     useEffect(() => {
         if(state === "prejoin" && emptyaudio) {
             emptyaudio.pause()
@@ -38,9 +41,9 @@ export default function MeetingPage() {
             <LiveKitRoom
                 serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL!}
                 token={null}
-                onConnected={() => {playSound("/connect.wav"); setState("main")}}
+                onConnected={() => {playSound("/connect.wav"); setState("main"); socket?.emit("status.set", {status: "BUSY"})}}
                 connect={false}
-                onDisconnected={() => {playSound("/disconnect.wav"); setState("prejoin")}}
+                onDisconnected={() => {playSound("/disconnect.wav"); setState("prejoin"); socket?.emit("status.set", {status: "ONLINE"})}}
             >
                 {state === "prejoin" ? <MeetingPreJoin roomid={params.meetingid!} joinedOnce={joinedOnce} setJoinedOnce={setJoinedOnce} token={token} /> : <MeetingMain emptyaudio={emptyaudio!} />}
             </LiveKitRoom>
