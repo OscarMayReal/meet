@@ -9,16 +9,7 @@ Meet is an open source video conferencing platform.
 - KeyStone
 
 ## Demo
-### URL
-https://meet.qplus.cloud
-### User accounts:
-#### Admin
-- username: somtesting/admin
-- password: test
-
-#### User
-- username: somtesting/user
-- password: test
+watch the demo [here](https://docs.google.com/videos/d/1lQiGTY8V15DKKnHxfouKMd2KMT2YlStsaBIei4YxJHU/play)
 
 ## Setup
 
